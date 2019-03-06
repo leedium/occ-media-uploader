@@ -3,9 +3,12 @@
   "version": "1.0.0",
   "description": "Tool to optimize, package, and deploy media to environments",
   "main": "index.js",
+  "bin": {
+    "omu": "./index.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node index.js"
+    "start": "nodemon index.js"
   },
   "repository": {
     "type": "git",
@@ -18,6 +21,13 @@
   },
   "homepage": "https://github.com/leedium/occ-media-uploader#readme",
   "dependencies": {
-    "filehound": "^1.17.0"
+    "adm-zip": "^0.4.13",
+    "commander": "^2.19.0",
+    "filehound": "^1.17.0",
+    "fs-extra": "^7.0.1"
+  },
+  "devDependencies": {
+    "axios": "^0.18.0",
+    "nodemon": "^1.18.10"
   }
 }
