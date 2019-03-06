@@ -1,6 +1,20 @@
 # occ-media-uploader
 Tool to optimize, package, and deploy media to multiple OCC instances
 
+
+#### Version v1.1.0
+
+## Chnagelog
+
+v1.1.0
+- added image optimization
+- updated readme
+
+v1.0.0
+- image zip
+- image transfer
+- uploadType option
+
 ## Installation
 ```$xslt
 npm i -g
