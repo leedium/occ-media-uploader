@@ -1,0 +1,23 @@
+{
+  "name": "occ-media-uploader",
+  "version": "1.0.0",
+  "description": "Tool to optimize, package, and deploy media to environments",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leedium/occ-media-uploader.git"
+  },
+  "author": "LEEDIUM",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/leedium/occ-media-uploader/issues"
+  },
+  "homepage": "https://github.com/leedium/occ-media-uploader#readme",
+  "dependencies": {
+    "filehound": "^1.17.0"
+  }
+}
