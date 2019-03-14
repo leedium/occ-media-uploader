@@ -25,7 +25,10 @@
     "commander": "^2.19.0",
     "filehound": "^1.17.0",
     "fs-extra": "^7.0.1",
-    "sharp": "^0.21.3"
+    "imagemin": "^6.1.0",
+    "imagemin-jpegtran": "^6.0.0",
+    "imagemin-mozjpeg": "^8.0.0",
+    "imagemin-pngquant": "^7.0.0"
   },
   "devDependencies": {
     "axios": "^0.18.0",
