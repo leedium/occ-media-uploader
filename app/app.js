@@ -18,6 +18,10 @@
 const FileHound = require('filehound');
 const AdmZip = require('adm-zip');
 const program = require('commander');
+const imagemin = require('imagemin');
+const imageminJpegtran = require('imagemin-jpegtran');
+const imageminPngquant = require('imagemin-pngquant');
+const imageminMozjpeg = require('imagemin-mozjpeg');
 
 const resObj = require('./restObj');
 const packageJSON = require('../package');
@@ -37,53 +41,75 @@ const list = val => val.split(',');
  * @returns {Promise<void>}
  */
 const start = async (program) => {
-    const filehound = FileHound.create();
-    const images = filehound
-        .path(program.imagepath)
-        .ext(extensionsArray)
-        .findSync();
-    const zipFileName = 'images.zip';
-    const zip = new AdmZip();
-    const uploadType = program.uploadtype || uploadTypes.general;
-
-    images.forEach(file => {
-        zip.addLocalFile(file);
-    });
-    zip.toBuffer(async (successBuffer) => {
-            try {
-                const buffer64 = Buffer.from(successBuffer).toString('base64')
-                const tokens = await Promise.all(program.servers.map((item, i) => {
-                    return resObj.apiCall(
-                        item,
-                        program.keys[i],
-                        'PUT',
-                        apiFilesEndpoint, {
-                            filename: zipFileName,
-                            segments: 1,
-                            uploadtype: uploadType
+    try {
+        const filehound = FileHound.create();
+        const zipFileName = 'images.zip';
+        const zip = new AdmZip();
+        const uploadType = program.uploadtype || uploadTypes.general;
+        let images;
+        let imgPath = program.imagepath;
+        if (typeof program.optimize !== 'undefined') {
+            console.log('optimizing images');
+            imgPath = 'build';
+            if (program.optimize < 1 && program.optimize > 0) {
+                const files = await imagemin(['./images/**/*.{jpg,png}'], './build/images', {
+                    plugins: [
+                        imageminMozjpeg({quality: program.optimize * 100}),
+                        imageminPngquant({
+                            quality: [program.optimize, program.optimize]
                         })
-                }));
-                await Promise.all(program.servers.map((item, i) => {
-                    console.log(`Sending media to ${item}`);
-                    return resObj.apiCall(
-                        item,
-                        program.keys[i],
-                        'POST',
-                        `${apiFilesEndpoint}/${tokens[i].token}`, {
-                            file: buffer64,
-                            filename: zipFileName,
-                            index: 0
-                        });
-                }));
-                console.log(`Transfer to ${program.servers.length} environments complete.`)
-
-            } catch (err) {
-                console.log(err.message);
+                    ]
+                });
+                console.log('optimization complete')
+            } else {
+                throw new Error("quality must be between 0 and 1")
             }
-        },
-        (err) => {
-            console.log(err.message);
+        }
+        images = filehound
+            .path(imgPath)
+            .ext(extensionsArray)
+            .findSync();
+
+        images.forEach(file => {
+            zip.addLocalFile(file);
         });
+        zip.toBuffer(async (successBuffer) => {
+                try {
+                    const buffer64 = Buffer.from(successBuffer).toString('base64')
+                    const tokens = await Promise.all(program.servers.map((item, i) => {
+                        return resObj.apiCall(
+                            item,
+                            program.keys[i],
+                            'PUT',
+                            apiFilesEndpoint, {
+                                filename: zipFileName,
+                                segments: 1,
+                                uploadtype: uploadType
+                            })
+                    }));
+                    await Promise.all(program.servers.map((item, i) => {
+                        console.log(`Sending media to ${item}`);
+                        return resObj.apiCall(
+                            item,
+                            program.keys[i],
+                            'POST',
+                            `${apiFilesEndpoint}/${tokens[i].token}`, {
+                                file: buffer64,
+                                filename: zipFileName,
+                                index: 0
+                            });
+                    }));
+                    console.log(`Transfer to ${program.servers.length} environments complete.`)
+                } catch (err) {
+                    console.log(err.message);
+                }
+            },
+            (err) => {
+                console.log(err.message);
+            });
+    }catch (err) {
+        console.log(`Error: ${err.message}`)
+    }
 };
 
 // main entry function
@@ -115,6 +141,11 @@ exports.main = function (argv) {
         .option(
             "-u, --uploadtype <uploadtype>",
             "Upload Type < productImage, collectionImage, general >"
+        )
+        .option(
+            "-v, --optimize <n>",
+            "optimizes images before packaging, (0 - 1)",
+            parseFloat
         )
         .parse(argv);
 
