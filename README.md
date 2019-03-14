@@ -45,6 +45,7 @@ omu --servers https://server1.oracleoutsourcing.com,https://server2.oracleoutsou
      --keys  SERVER_1_KEY,SERVER_2_KEY 
      --imagepath images
      --uploadtype productImage
+     --optimize 0.5
 ```
 
 
