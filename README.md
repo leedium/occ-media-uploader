@@ -38,13 +38,13 @@ Options:
   
 ```
 
-#### Example
+#### Example for a general(non collection/product) image
 
 ```$xslt
 omu --servers https://server1.oracleoutsourcing.com,https://server2.oracleoutsourcing.com 
      --keys  SERVER_1_KEY,SERVER_2_KEY 
      --imagepath images
-     --uploadtype productImage
+     --uploadtype general
      --optimize 0.5
 ```
 
