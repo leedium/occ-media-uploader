@@ -21,8 +21,10 @@ const program = require('commander');
 const imagemin = require('imagemin');
 const imageminJpegtran = require('imagemin-jpegtran');
 const imageminPngquant = require('imagemin-pngquant');
+const imageminGifsicle = require('imagemin-gifsicle');
 const imageminMozjpeg = require('imagemin-mozjpeg');
 
+const zipFileName = "images.zip"
 const resObj = require('./restObj');
 const packageJSON = require('../package');
 const extensionsArray = ['.jpg', '.png', '.gif', 'svg', '.tiff', '.tif'];
@@ -52,15 +54,16 @@ const start = async (program) => {
             console.log('optimizing images');
             imgPath = 'build';
             if (program.optimize < 1 && program.optimize > 0) {
-                const files = await imagemin(['./images/**/*.{jpg,png}'], './build/images', {
+                const files = await imagemin(['./images/**/*.{jpg,png,gif}'], './build/images', {
                     plugins: [
                         imageminMozjpeg({quality: program.optimize * 100}),
                         imageminPngquant({
                             quality: [program.optimize, program.optimize]
-                        })
+                        }),
+                        imageminGifsicle()
                     ]
                 });
-                console.log('optimization complete')
+                // console.log('optimization complete')
             } else {
                 throw new Error("quality must be between 0 and 1")
             }
@@ -71,8 +74,10 @@ const start = async (program) => {
             .findSync();
 
         images.forEach(file => {
+            // console.log(file)
             zip.addLocalFile(file);
         });
+
         zip.toBuffer(async (successBuffer) => {
                 try {
                     const buffer64 = Buffer.from(successBuffer).toString('base64')
@@ -88,7 +93,7 @@ const start = async (program) => {
                             })
                     }));
                     await Promise.all(program.servers.map((item, i) => {
-                        console.log(`Sending media to ${item}`);
+                        // console.log(`Sending media to ${item}`);
                         return resObj.apiCall(
                             item,
                             program.keys[i],
