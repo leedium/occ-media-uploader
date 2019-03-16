@@ -26,6 +26,7 @@ const restObj = {
         data,
         url: `${server}${apiPath}`,
         responseType,
+        maxContentLength: Infinity,
         headers: Object.assign({}, {
           Authorization: `Bearer ${occTokenGenerator.getCurrentToken() ||
           await occTokenGenerator.generateToken(server, key)}`,

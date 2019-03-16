@@ -22,10 +22,11 @@
   "homepage": "https://github.com/leedium/occ-media-uploader#readme",
   "dependencies": {
     "adm-zip": "^0.4.13",
+    "busboy": "^0.3.0",
     "commander": "^2.19.0",
     "filehound": "^1.17.0",
-    "fs-extra": "^7.0.1",
     "imagemin": "^6.1.0",
+    "imagemin-gifsicle": "^6.0.1",
     "imagemin-jpegtran": "^6.0.0",
     "imagemin-mozjpeg": "^8.0.0",
     "imagemin-pngquant": "^7.0.0"

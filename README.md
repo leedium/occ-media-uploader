@@ -1,6 +1,9 @@
 # occ-media-uploader
 Tool to optimize, package, and deploy media to multiple OCC instances
 
+### * Max file size per zip in 1GB
+
+
 
 #### Version v1.1.0
 
